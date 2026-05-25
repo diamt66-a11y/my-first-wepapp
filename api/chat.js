@@ -25,11 +25,11 @@ module.exports = async function handler(req, res) {
     const prompt = `너는 내 웹사이트에 방문한 사람들을 친절하게 맞이하고 질문에 답해주는 AI 비서야. 무조건 한국어로 짧고 명확하게, 이모티콘을 섞어서 친절하게 대답해줘. 사용자의 말: ${message}`;
     
     const result = await model.generateContent(prompt);
-    const text = await result.response.text();
+    const text = result.response.text();
 
     return res.status(200).json({ reply: text });
   } catch (error) {
     console.error('Error with Gemini API:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: '디버그 오류: ' + (error.message || String(error)) });
   }
 }
