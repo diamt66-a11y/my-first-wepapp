@@ -80,6 +80,101 @@
             transform: translateY(-5px); /* 위로 살짝 뜹니다 */
             box-shadow: 0 15px 25px rgba(255, 65, 108, 0.5); /* 그림자가 진해집니다 */
         }
+
+        /* 챗봇 스타일 */
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .chat-toggle-btn:hover {
+            transform: scale(1.1);
+        }
+        .chat-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 300px;
+            height: 400px;
+            background: rgba(30, 30, 47, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .chat-header {
+            background: rgba(0, 242, 254, 0.2);
+            padding: 15px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .bot-message {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+        .user-message {
+            background: linear-gradient(to right, #00f2fe, #4facfe);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            outline: none;
+        }
+        .chat-input-area button {
+            background: transparent;
+            border: none;
+            color: #00f2fe;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -89,6 +184,87 @@
         <!-- 버튼을 누르면 알림창(JS)이 뜹니다 -->
         <a href="#" class="btn" onclick="alert('멋진 버튼을 클릭하셨군요! 환영합니다!')">마법의 버튼 클릭하기</a>
     </div>
+
+    <!-- 챗봇 UI -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            🤖 AI 비서
+            <button onclick="toggleChat()" style="background:none;border:none;color:white;cursor:pointer;font-weight:bold;">X</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">안녕하세요! 이곳에 오신 것을 환영합니다! 😊 무엇을 도와드릴까요?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+    
+    <!-- 챗봇 토글 버튼 -->
+    <button class="chat-toggle-btn" onclick="toggleChat()">💬</button>
+
+    <script>
+        function toggleChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+                chatContainer.style.display = 'flex';
+            } else {
+                chatContainer.style.display = 'none';
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // 사용자 메시지 화면에 띄우기
+            addMessage(message, 'user-message');
+            input.value = '';
+
+            // 로딩 메시지 띄우기
+            const loadingId = addMessage('생각 중입니다...', 'bot-message');
+
+            try {
+                // 백엔드 API (api/chat.js) 호출
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                
+                // 로딩 지우고 진짜 답변 띄우기
+                document.getElementById(loadingId).remove();
+                if (response.ok) {
+                    addMessage(data.reply, 'bot-message');
+                } else {
+                    addMessage('죄송합니다. 오류가 발생했어요: ' + data.message, 'bot-message');
+                }
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addMessage('통신 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', 'bot-message');
+            }
+        }
+
+        function addMessage(text, className) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.innerText = text;
+            msgDiv.id = 'msg-' + Date.now();
+            messagesDiv.appendChild(msgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            return msgDiv.id;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+
     <!-- PWA 서비스 워커 등록 -->
     <script>
       if ('serviceWorker' in navigator) {
