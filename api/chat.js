@@ -16,8 +16,8 @@ module.exports = async function handler(req, res) {
 
     const prompt = `너는 내 웹사이트에 방문한 사람들을 친절하게 맞이하고 질문에 답해주는 AI 비서야. 무조건 한국어로 짧고 명확하게, 이모티콘을 섞어서 친절하게 대답해줘. 사용자의 말: ${message}`;
     
-    // 가장 안정적인 구버전(v1)과 gemini-pro 모델을 사용합니다.
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
+    // 최신 모델인 gemini-1.5-flash-latest 를 사용합니다.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
     
     const apiResponse = await fetch(url, {
       method: 'POST',
