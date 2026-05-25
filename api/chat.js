@@ -9,15 +9,15 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ message: 'Message is required' });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : null;
     if (!apiKey) {
       return res.status(500).json({ message: 'API key is not configured in Vercel' });
     }
 
     const prompt = `너는 내 웹사이트에 방문한 사람들을 친절하게 맞이하고 질문에 답해주는 AI 비서야. 무조건 한국어로 짧고 명확하게, 이모티콘을 섞어서 친절하게 대답해줘. 사용자의 말: ${message}`;
     
-    // SDK 오류를 피하기 위해 Google API에 직접 요청(fetch)을 보냅니다.
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // 가장 안정적인 구버전(v1)과 gemini-pro 모델을 사용합니다.
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
     
     const apiResponse = await fetch(url, {
       method: 'POST',
