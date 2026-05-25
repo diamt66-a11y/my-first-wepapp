@@ -43,6 +43,20 @@ async function run() {
 
   } catch (error) {
     console.error("오류 발생:", error);
+    try {
+      const token = process.env.GITHUB_TOKEN;
+      if (token && github.context.payload.issue) {
+        const octokit = github.getOctokit(token);
+        await octokit.rest.issues.createComment({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          issue_number: github.context.payload.issue.number,
+          body: `🤖 앗! 코드를 고치려다 실패했습니다. 구글 AI 에러 내용:\n\`\`\`\n${error.message || String(error)}\n\`\`\``
+        });
+      }
+    } catch (commentError) {
+      console.error("댓글 달기 실패:", commentError);
+    }
     process.exit(1);
   }
 }
