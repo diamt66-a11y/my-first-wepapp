@@ -1,0 +1,43 @@
+name: AI Coding Bot
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  ai-code-modifier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: Node.js 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 봇 라이브러리 설치
+        working-directory: ./bot
+        run: npm install
+
+      - name: AI 봇 가동! (코드 수정)
+        working-directory: ./bot
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node index.js
+
+      - name: 수정된 코드 결재 올리기 (PR 생성)
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "🤖 AI가 코드를 수정했습니다: ${{ github.event.issue.title }}"
+          title: "🤖 AI 코드 수정 제안: ${{ github.event.issue.title }}"
+          body: "이슈 #${{ github.event.issue.number }} 에 대한 AI의 자동 수정안입니다. 폰으로 확인 후 Merge 해주세요!"
+          branch: "ai-fix-${{ github.event.issue.number }}"
+          delete-branch: true
