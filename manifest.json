@@ -1,0 +1,15 @@
+{
+  "name": "마법의 클라우드 앱",
+  "short_name": "클라우드앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e1e2f",
+  "theme_color": "#1e1e2f",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

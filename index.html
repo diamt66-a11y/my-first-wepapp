@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 빛나는 웹사이트</title>
+    <!-- PWA 연결 -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1e1e2f">
+    <link rel="apple-touch-icon" href="/icon.png">
     <!-- 예쁜 폰트 불러오기 -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -85,5 +89,13 @@
         <!-- 버튼을 누르면 알림창(JS)이 뜹니다 -->
         <a href="#" class="btn" onclick="alert('멋진 버튼을 클릭하셨군요! 환영합니다!')">마법의 버튼 클릭하기</a>
     </div>
+    <!-- PWA 서비스 워커 등록 -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
 </body>
 </html>
