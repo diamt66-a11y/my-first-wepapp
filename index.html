@@ -83,6 +83,29 @@
             box-shadow: 0 15px 25px rgba(128, 0, 128, 0.6); /* 그림자가 진해집니다 */
         }
 
+        /* 새로운 페르소나 버튼 스타일 */
+        .persona-btn {
+            background: linear-gradient(to right, #e05dff, #8e2de2); /* 퍼플-핑크 그라데이션 */
+            color: white;
+            border: none;
+            padding: 18px 40px; /* 더 크게 */
+            font-size: 1.3rem; /* 글씨도 더 크게 */
+            font-weight: 800; /* 더 굵게 */
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 12px 25px rgba(142, 45, 226, 0.5); /* 그라데이션에 어울리는 그림자 */
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px; /* 위쪽 여백 추가 */
+            margin-left: 15px; /* 기존 버튼과 간격 */
+        }
+
+        .persona-btn:hover {
+            transform: translateY(-7px); /* 더 크게 뜹니다 */
+            box-shadow: 0 18px 30px rgba(142, 45, 226, 0.7); /* 그림자가 진해지고 커집니다 */
+        }
+
         /* 챗봇 스타일 */
         .chat-toggle-btn {
             position: fixed;
@@ -183,8 +206,10 @@
     <div class="card">
         <h1>Hello, Cloud! 🚀</h1>
         <p>밋밋했던 하얀 화면이 이렇게 멋지게 변했습니다. 로컬과 클라우드 서버 연동을 완벽하게 마친 당신을 환영합니다!</p>
-        <!-- 버튼을 누르면 알림창(JS)이 뜹니다 -->
+        <!-- 기존 마법의 버튼 -->
         <a href="#" class="btn" onclick="alert('멋진 버튼을 클릭하셨군요! 환영합니다!')">마법의 버튼 클릭하기</a>
+        <!-- 새로운 페르소나 버튼 추가 -->
+        <a href="#" class="persona-btn" onclick="alert('페르소나 설정 기능을 준비 중입니다!')">내 페르소나 설정하기</a>
     </div>
 
     <!-- 챗봇 UI -->
